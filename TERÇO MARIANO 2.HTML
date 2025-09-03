@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terço Católico Completo</title>
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #D2B48C;
+            --accent-color: #A52A2A;
+            --light-color: #F5F5DC;
+            --dark-color: #3D2B1F;
+            --prayer-active: #f8f8f8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        select, button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        select:hover, button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .mystery-info {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .prayer-display {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .prayer-text {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .current-prayer {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .counter {
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+        
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bead-counter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 12px 0;
+        }
+        
+        .bead {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--dark-color);
+        }
+        
+        .bead.active {
+            background-color: var(--accent-color);
+        }
+        
+        .bead.our-father {
+            background-color: var(--primary-color);
+        }
+        
+        .bead.glory-be {
+            background-color: #4CAF50;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: var(--dark-color);
+            color: white;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .controls, .navigation, .audio-controls {
+                flex-direction: column;
+            }
+            
+            select, button, .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Terço Católico Completo</h1>
+            <p>Reze o terço seguindo a tradição católica</p>
+        </header>
+        
+        <div class="controls">
+            <select id="mystery-type">
+                <option value="auto">Automático (por dia da semana)</option>
+                <option value="gozosos">Mistérios Gozosos (segunda e sábado)</option>
+                <option value="dolorosos">Mistérios Dolorosos (terça e sexta)</option>
+                <option value="gloriosos">Mistérios Gloriosos (quarta e domingo)</option>
+                <option value="luminosos">Mistérios Luminosos (quinta-feira)</option>
+            </select>
+            
+            <button id="start-btn">Iniciar Terço</button>
+            <button id="reset-btn">Reiniciar</button>
+        </div>
+        
+        <div class="mystery-info">
+            <h2 id="current-mystery-name">Mistério: </h2>
+            <p id="current-mystery-description"></p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="bead-counter" id="bead-counter">
+            <!-- Contas do terço serão geradas aqui via JavaScript -->
+        </div>
+        
+        <div class="prayer-display">
+            <div class="counter">
+                <span id="bead-info">Conta: 0/59</span>
+                <span id="decade-info"> | Mistério: 0/5</span>
+            </div>
+            
+            <div class="current-prayer" id="current-prayer-name">Oração Inicial</div>
+            <div class="prayer-text" id="prayer-text">
+                Em nome do Pai, do Filho e do Espírito Santo. Amém.
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn">Anterior</button>
+            <button class="nav-btn" id="next-btn">Próximo</button>
+        </div>
+        
+        <div class="audio-controls">
+            <button id="play-pause-btn">Reproduzir Áudio</button>
+            <div class="volume-control">
+                <label for="volume">Volume:</label>
+                <input type="range" id="volume" name="volume" min="0" max="1" step="0.1" value="0.7">
+            </div>
+        </div>
+        
+        <!-- Áudios integrados para funcionamento offline -->
+        <audio id="audio-player"></audio>
+        <audio id="background-music" loop>
+            <!-- Este áudio será carregado via JavaScript -->
+        </audio>
+    </div>
+    
+    <footer>
+        <p>Aplicação para rezar o Santo Terço - Desenvolvido com devoção</p>
+    </footer>
+
+    <script>
+        // Dados dos mistérios
+        const mysteries = {
+            gozosos: {
+                name: "Mistérios Gozosos",
+                days: ["segunda-feira", "sábado"],
+                mysteries: [
+                    "No primeiro mistério gozoso, contemplamos a Anunciação do Anjo Gabriel a Nossa Senhora.",
+                    "No segundo mistério gozoso, contemplamos a Visitação de Maria a Santa Isabel.",
+                    "No terceiro mistério gozoso, contemplamos o Nascimento de Jesus em Belém.",
+                    "No quarto mistério gozoso, contemplamos a Apresentação do Menino Jesus no Templo.",
+                    "No quinto mistério gozoso, contemplamos a Perda e o Encontro de Jesus no Templo."
+                ]
+            },
+            dolorosos: {
+                name: "Mistérios Dolorosos",
+                days: ["terça-feira", "sexta-feira"],
+                mysteries: [
+                    "No primeiro mistério doloroso, contemplamos a Agonia de Jesus no Horto das Oliveiras.",
+                    "No segundo mistério doloroso, contemplamos a Flagelação de Jesus atado à coluna.",
+                    "No terceiro mistério doloroso, contemplamos a Coroação de Espinhos de Jesus.",
+                    "No quarto mistério doloroso, contemplamos Jesus carregando a Cruz até o Calvário.",
+                    "No quinto mistério doloroso, contemplamos a Crucifixão e Morte de Jesus."
+                ]
+            },
+            gloriosos: {
+                name: "Mistérios Gloriosos",
+                days: ["quarta-feira", "domingo"],
+                mysteries: [
+                    "No primeiro mistério glorioso, contemplamos a Ressurreição de Jesus Cristo.",
+                    "No segundo mistério glorioso, contemplamos a Ascensão de Jesus ao Céu.",
+                    "No terceiro mistério glorioso, contemplamos a Vinda do Espírito Santo sobre os Apóstolos.",
+                    "No quarto mistério glorioso, contemplamos a Assunção de Maria ao Céu.",
+                    "No quinto mistério glorioso, contemplamos a Coroação de Maria como Rainha do Céu e da Terra."
+                ]
+            },
+            luminosos: {
+                name: "Mistérios Luminosos",
+                days: ["quinta-feira"],
+                mysteries: [
+                    "No primeiro mistério luminoso, contemplamos o Batismo de Jesus no Jordão.",
+                    "No segundo mistério luminoso, contemplamos as Bodas de Caná.",
+                    "No terceiro mistério luminoso, contemplamos o Anúncio do Reino de Deus.",
+                    "No quarto mistério luminoso, contemplamos a Transfiguração de Jesus.",
+                    "No quinto mistério luminoso, contemplamos a Instituição da Eucaristia."
+                ]
+            }
+        };
+
+        // Orações do terço
+        const prayers = {
+            signOfCross: {
+                name: "Sinal da Cruz",
+                text: "Em nome do Pai, e do Filho, e do Espírito Santo. Amém."
+            },
+            apostlesCreed: {
+                name: "Credo",
+                text: "Creio em Deus Pai todo-poderoso, Criador do céu e da terra; e em Jesus Cristo, seu único Filho, nosso Senhor; que foi concebido pelo poder do Espírito Santo, nasceu da Virgem Maria, padeceu sob Pôncio Pilatos, foi crucificado, morto e sepultado; desceu à mansão dos mortos, ressuscitou ao terceiro día, subiu aos céus, está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos. Creio no Espírito Santo, na Santa Igreja Católica, na comunhão dos santos, na remissão dos pecados, na ressurreição da carne e na vida eterna. Amém."
+            },
+            ourFather: {
+                name: "Pai-Nosso",
+                text: "Pai-Nosso que estais no céu, santificado seja o Vosso nome, venha a nós o Vosso reino, seja feita a Vossa vontade assim na terra como no céu. O pão nosso de cada dia nos dai hoje, perdoai-nos as nossas ofensas assim como nós perdoamos a quem nos tem ofendido, e não nos deixeis cair em tentação, mas livrai-nos do mal. Amém."
+            },
+            hailMary: {
+                name: "Ave-Maria",
+                text: "Ave-Maria, cheia de graça, o Senhor é convosco, bendita sois Vós entre as mulheres, e bendito é o fruto do Vosso ventre, Jesus. Santa Maria, Mãe de Deus, rogai por nós, pecadores, agora e na hora da nossa morte. Amém."
+            },
+            gloryBe: {
+                name: "Glória ao Pai",
+                text: "Glória ao Pai, e ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre, e por todos os séculos. Amém."
+            },
+            fatimaPrayer: {
+                name: "Jaculatória",
+                text: "Ó meu Jesus, perdoai-nos e livrai-nos do fogo do inferno, levai as almas todas para o céu e socorrei principalmente as que mais precisarem."
+            },
+            hailHolyQueen: {
+                name: "Salve-Rainha",
+                text: "Salve, Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A vós bradamos, os degradados filhos de Eva. A vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, advogada nossa; esses vossos olhos misericordiosos a nós volvei. E depois deste desterro mostrai-nos Jesus, bendito fruto do vosso ventre. Ó clemente, ó piedosa, ó doce sempre Virgem Maria. Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo. Amém."
+            },
+            finalPrayer: {
+                name: "Agradecimento",
+                text: "Infinitas graças vos damos, Soberana Rainha, pelos benefícios que todos os dias recebemos de vossas mãos liberais. Dignai-vos agora e para sempre tomar-nos debaixo de vosso poderoso amparo e para mais vos obrigar vos saudamos com uma Salve Rainha. Amém."
+            }
+        };
+
+        // Estrutura completa do terço - CORRIGIDA: Agradecimento antes de Salve Rainha
+        const rosaryStructure = [
+            { prayer: "signOfCross", type: "initial" },
+            { prayer: "apostlesCreed", type: "initial" },
+            { prayer: "ourFather", type: "initial" },
+            { prayer: "hailMary", type: "initial", count: 1 },
+            { prayer: "hailMary", type: "initial", count: 2 },
+            { prayer: "hailMary", type: "initial", count: 3 },
+            { prayer: "gloryBe", type: "initial" },
+            { prayer: "fatimaPrayer", type: "initial" },
+            
+            // Primeiro mistério
+            { prayer: "mysteryAnnouncement", type: "decadeStart", decade: 1 },
+            { prayer: "ourFather", type: "decadePrayer", decade: 1 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 1 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 2 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 3 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 4 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 5 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 6 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 7 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 8 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 9 },
+            { prayer: "hailMary", type: "decade", decade: 1, count: 10 },
+            { prayer: "gloryBe", type: "decadeEnd", decade: 1 },
+            { prayer: "fatimaPrayer", type: "decadeEnd", decade: 1 },
+            
+            // Segundo mistério
+            { prayer: "mysteryAnnouncement", type: "decadeStart", decade: 2 },
+            { prayer: "ourFather", type: "decadePrayer", decade: 2 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 1 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 2 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 3 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 4 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 5 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 6 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 7 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 8 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 9 },
+            { prayer: "hailMary", type: "decade", decade: 2, count: 10 },
+            { prayer: "gloryBe", type: "decadeEnd", decade: 2 },
+            { prayer: "fatimaPrayer", type: "decadeEnd", decade: 2 },
+            
+            // Terceiro mistério
+            { prayer: "mysteryAnnouncement", type: "decadeStart", decade: 3 },
+            { prayer: "ourFather", type: "decadePrayer", decade: 3 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 1 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 2 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 3 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 4 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 5 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 6 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 7 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 8 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 9 },
+            { prayer: "hailMary", type: "decade", decade: 3, count: 10 },
+            { prayer: "gloryBe", type: "decadeEnd", decade: 3 },
+            { prayer: "fatimaPrayer", type: "decadeEnd", decade: 3 },
+            
+            // Quarto mistério
+            { prayer: "mysteryAnnouncement", type: "decadeStart", decade: 4 },
+            { prayer: "ourFather", type: "decadePrayer", decade: 4 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 1 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 2 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 3 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 4 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 5 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 6 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 7 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 8 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 9 },
+            { prayer: "hailMary", type: "decade", decade: 4, count: 10 },
+            { prayer: "gloryBe", type: "decadeEnd", decade: 4 },
+            { prayer: "fatimaPrayer", type: "decadeEnd", decade: 4 },
+            
+            // Quinto mistério
+            { prayer: "mysteryAnnouncement", type: "decadeStart", decade: 5 },
+            { prayer: "ourFather", type: "decadePrayer", decade: 5 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 1 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 2 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 3 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 4 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 5 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 6 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 7 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 8 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 9 },
+            { prayer: "hailMary", type: "decade", decade: 5, count: 10 },
+            { prayer: "gloryBe", type: "decadeEnd", decade: 5 },
+            { prayer: "fatimaPrayer", type: "decadeEnd", decade: 5 },
+            
+            // Orações finais - CORREÇÃO: Agradecimento antes de Salve Rainha
+            { prayer: "finalPrayer", type: "final" },
+            { prayer: "hailHolyQueen", type: "final" },
+            { prayer: "signOfCross", type: "final" }
+        ];
+
+        // Mapeamento de áudios
+        const audioFiles = {
+            signOfCross: "Sinal da Cruz.mp3",
+            apostlesCreed: "CREDO.mp3",
+            ourFather: "PAI NOSSO.wav",
+            hailMary: "Ave-Maria.wav",
+            gloryBe: "1. GLÓRIA AO PAI.wav",
+            fatimaPrayer: "JACULATÓRIA.mp3",
+            hailHolyQueen: "SALVE RAINHA.mp3",
+            finalPrayer: "AGRADECIMENTO DO TERÇO.mp3",
+            mysteryAnnouncement: {
+                gozosos: [
+                    "Primeiro Mistério Gozoso.wav",
+                    "Segundo Mistério Gozoso.wav",
+                    "Terceiro Mistério Gozoso.wav",
+                    "Quarto Mistério Gozoso.wav",
+                    "Quinto Mistério Gozoso.wav"
+                ],
+                dolorosos: [
+                    "Primeiro Mistério Doloroso.mp3",
+                    "Segundo Mistério Doloroso.mp3",
+                    "Terceiro Mistério Doloroso.mp3",
+                    "Quarto Mistério Doloroso.mp3",
+                    "Quinto Mistério Doloroso.mp3"
+                ],
+                gloriosos: [
+                    "Primeiro Mistério Glorioso.mp3",
+                    "Segundo Mistério Glorioso.mp3",
+                    "Terceiro Mistério Glorioso.mp3",
+                    "Quarto Mistério Glorioso.mp3",
+                    "Quinto Mistério Glorioso.mp3"
+                ],
+                luminosos: [
+                    "Primeiro Mistério Luminoso.mp3",
+                    "Segundo Mistério Luminoso.mp3",
+                    "Terceiro Mistério Luminoso.mp3",
+                    "Quarto Mistério Luminoso.mp3",
+                    "Quinto Mistério Luminoso.mp3"
+                ]
+            },
+            offering: {
+                gozosos: "OFERECIMENTO MISTÉRIO GOZOSO.mp3",
+                dolorosos: "OFERECIMENTO MISTÉRIO DOLOROSO.mp3",
+                gloriosos: "OFERECIMENTO MISTÉRIO GLORIOSO.mp3",
+                luminosos: "OFERECIMENTO MISTÉRIO LUMINOSO.mp3"
+            }
+        };
+
+        // Estado do aplicativo
+        let currentState = {
+            currentMysteryType: null,
+            currentPrayerIndex: 0,
+            currentDecade: 0,
+            isPlaying: false,
+            audioPlayer: document.getElementById('audio-player'),
+            backgroundMusic: document.getElementById('background-music')
+        };
+
+        // Elementos do DOM
+        const mysteryTypeSelect = document.getElementById('mystery-type');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const currentMysteryName = document.getElementById('current-mystery-name');
+        const currentMysteryDescription = document.getElementById('current-mystery-description');
+        const progressBar = document.getElementById('progress-bar');
+        const beadCounter = document.getElementById('bead-counter');
+        const beadInfo = document.getElementById('bead-info');
+        const decadeInfo = document.getElementById('decade-info');
+        const currentPrayerName = document.getElementById('current-prayer-name');
+        const prayerText = document.getElementById('prayer-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const volumeControl = document.getElementById('volume');
+
+        // Determinar o mistério do dia automaticamente
+        function getTodaysMystery() {
+            const days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+            const today = days[new Date().getDay()];
+            
+            if (today === 'segunda-feira' || today === 'sábado') return 'gozosos';
+            if (today === 'terça-feira' || today === 'sexta-feira') return 'dolorosos';
+            if (today === 'quarta-feira' || today === 'domingo') return 'gloriosos';
+            if (today === 'quinta-feira') return 'luminosos';
+        }
+
+        // Inicializar o aplicativo
+        function initApp() {
+            // Configurar o mistério do dia
+            const todaysMystery = getTodaysMystery();
+            currentState.currentMysteryType = todaysMystery;
+            
+            // Atualizar a interface
+            updateMysteryDisplay();
+            updatePrayerDisplay();
+            updateCounters();
+            createBeadCounter();
+            
+            // Configurar event listeners
+            startBtn.addEventListener('click', startRosary);
+            resetBtn.addEventListener('click', resetRosary);
+            prevBtn.addEventListener('click', previousPrayer);
+            nextBtn.addEventListener('click', nextPrayer);
+            playPauseBtn.addEventListener('click', toggleAudio);
+            mysteryTypeSelect.addEventListener('change', changeMysteryType);
+            volumeControl.addEventListener('input', adjustVolume);
+            
+            // Configurar áudio de fundo
+            try {
+                // Tentar carregar áudio de fundo (canto gregoriano)
+                currentState.backgroundMusic.src = "data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV VaughV";
+                currentState.backgroundMusic.volume = 0.3;
+            } catch (e) {
+                console.log("Áudio de fundo não disponível");
+            }
+        }
+
+        // Criar contador visual de contas
+        function createBeadCounter() {
+            beadCounter.innerHTML = '';
+            
+            // Cruz
+            addBead('Cruz', 'initial');
+            // Credo
+            addBead('Credo', 'initial');
+            // Pai Nosso
+            addBead('Pai Nosso', 'our-father');
+            // 3 Ave Marias
+            for (let i = 0; i < 3; i++) {
+                addBead('Ave Maria', 'initial');
+            }
+            // Glória
+            addBead('Glória', 'glory-be');
+            // Jaculatória
+            addBead('Jaculatória', 'initial');
+            
+            // 5 Mistérios (cada um com 1 Pai Nosso + 10 Ave Marias + Glória + Jaculatória)
+            for (let decade = 1; decade <= 5; decade++) {
+                addBead('Pai Nosso', 'our-father');
+                for (let i = 0; i < 10; i++) {
+                    addBead('Ave Maria', 'decade');
+                }
+                addBead('Glória', 'glory-be');
+                addBead('Jaculatória', 'initial');
+            }
+            
+            // Agradecimento (agora antes da Salve Rainha)
+            addBead('Agradecimento', 'initial');
+            // Salve Rainha
+            addBead('Salve Rainha', 'initial');
+            // Sinal da Cruz final
+            addBead('Sinal da Cruz', 'initial');
+        }
+
+        function addBead(label, type) {
+            const bead = document.createElement('div');
+            bead.className = `bead ${type}`;
+            bead.title = label;
+            beadCounter.appendChild(bead);
+        }
+
+        // Atualizar a exibição do mistério
+        function updateMysteryDisplay() {
+            const mystery = mysteries[currentState.currentMysteryType];
+            currentMysteryName.textContent = `Mistério: ${mystery.name}`;
+            
+            const currentPrayer = rosaryStructure[currentState.currentPrayerIndex];
+            if (currentPrayer.type === 'decadeStart' && currentPrayer.decade) {
+                currentMysteryDescription.textContent = mystery.mysteries[currentPrayer.decade - 1];
+            } else {
+                currentMysteryDescription.textContent = `Reze nas ${mystery.days.join(' e ')}`;
+            }
+        }
+
+        // Atualizar a exibição da oração
+        function updatePrayerDisplay() {
+            const currentPrayer = rosaryStructure[currentState.currentPrayerIndex];
+            
+            if (currentPrayer.prayer === "mysteryAnnouncement") {
+                const mystery = mysteries[currentState.currentMysteryType];
+                currentPrayerName.textContent = `Anúncio do ${currentPrayer.decade}º Mistério`;
+                prayerText.textContent = mystery.mysteries[currentPrayer.decade - 1];
+            } else {
+                const prayer = prayers[currentPrayer.prayer];
+                currentPrayerName.textContent = prayer.name;
+                prayerText.textContent = prayer.text;
+                
+                // Adicionar contador para Ave-Marias nas décadas
+                if (currentPrayer.prayer === "hailMary" && currentPrayer.type === "decade") {
+                    currentPrayerName.textContent += ` (${currentPrayer.count}/10)`;
+                }
+            }
+            
+            // Destaque visual para a oração atual
+            const beads = document.querySelectorAll('.bead');
+            beads.forEach((bead, index) => {
+                bead.classList.remove('active');
+                if (index === currentState.currentPrayerIndex) {
+                    bead.classList.add('active');
+                }
+            });
+            
+            // Atualizar a barra de progresso
+            const progress = ((currentState.currentPrayerIndex + 1) / rosaryStructure.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Atualizar os contadores
+        function updateCounters() {
+            beadInfo.textContent = `Conta: ${currentState.currentPrayerIndex + 1}/${rosaryStructure.length}`;
+            
+            const currentPrayer = rosaryStructure[currentState.currentPrayerIndex];
+            if (currentPrayer.type.includes('decade') && currentPrayer.decade) {
+                decadeInfo.textContent = ` | Mistério: ${currentPrayer.decade}/5`;
+                currentState.currentDecade = currentPrayer.decade;
+            } else {
+                decadeInfo.textContent = ` | Mistério: 0/5`;
+                currentState.currentDecade = 0;
+            }
+        }
+
+        // Obter o arquivo de áudio para a oração atual
+        function getAudioForCurrentPrayer() {
+            const currentPrayer = rosaryStructure[currentState.currentPrayerIndex];
+            
+            if (currentPrayer.prayer === "mysteryAnnouncement") {
+                const mysteryType = currentState.currentMysteryType;
+                const decade = currentPrayer.decade - 1; // Convert to 0-based index
+                return `audios/${audioFiles.mysteryAnnouncement[mysteryType][decade]}`;
+            } else if (currentPrayer.prayer === "offering") {
+                const mysteryType = currentState.currentMysteryType;
+                return `audios/${audioFiles.offering[mysteryType]}`;
+            } else {
+                return `audios/${audioFiles[currentPrayer.prayer]}`;
+            }
+        }
+
+        // Reproduzir áudio da oração atual
+        function playCurrentAudio() {
+            try {
+                const audioFile = getAudioForCurrentPrayer();
+                currentState.audioPlayer.src = audioFile;
+                currentState.audioPlayer.play().catch(error => {
+                    console.log("Erro ao reproduzir áudio: ", error);
+                });
+            } catch (e) {
+                console.log("Áudio não disponível para esta oração");
+            }
+        }
+
+        // Iniciar o terço
+        function startRosary() {
+            const selectedMystery = mysteryTypeSelect.value;
+            
+            if (selectedMystery === 'auto') {
+                currentState.currentMysteryType = getTodaysMystery();
+            } else {
+                currentState.currentMysteryType = selectedMystery;
+            }
+            
+            currentState.currentPrayerIndex = 0;
+            currentState.currentDecade = 0;
+            
+            updateMysteryDisplay();
+            updatePrayerDisplay();
+            updateCounters();
+            
+            // Iniciar áudio
+            playAudio();
+        }
+
+        // Reiniciar o terço
+        function resetRosary() {
+            currentState.currentPrayerIndex = 0;
+            currentState.currentDecade = 0;
+            
+            updateMysteryDisplay();
+            updatePrayerDisplay();
+            updateCounters();
+            
+            // Parar áudio
+            pauseAudio();
+        }
+
+        // Avançar para a próxima oração
+        function nextPrayer() {
+            if (currentState.currentPrayerIndex < rosaryStructure.length - 1) {
+                currentState.currentPrayerIndex++;
+                updateMysteryDisplay();
+                updatePrayerDisplay();
+                updateCounters();
+                playCurrentAudio();
+            }
+        }
+
+        // Voltar para a oração anterior
+        function previousPrayer() {
+            if (currentState.currentPrayerIndex > 0) {
+                currentState.currentPrayerIndex--;
+                updateMysteryDisplay();
+                updatePrayerDisplay();
+                updateCounters();
+                playCurrentAudio();
+            }
+        }
+
+        // Alterar o tipo de mistério
+        function changeMysteryType() {
+            if (mysteryTypeSelect.value !== 'auto') {
+                currentState.currentMysteryType = mysteryTypeSelect.value;
+                updateMysteryDisplay();
+            }
+        }
+
+        // Reproduzir áudio
+        function playAudio() {
+            currentState.isPlaying = true;
+            playPauseBtn.textContent = "Pausar Áudio";
+            
+            // Iniciar áudio de fundo
+            currentState.backgroundMusic.play().catch(error => {
+                console.log("Reprodução automática bloqueada pelo navegador: ", error);
+            });
+            
+            // Reproduzir áudio da oração atual
+            playCurrentAudio();
+        }
+
+        // Pausar áudio
+        function pauseAudio() {
+            currentState.isPlaying = false;
+            playPauseBtn.textContent = "Reproduzir Áudio";
+            
+            // Pausar áudio de fundo
+            currentState.backgroundMusic.pause();
+            
+            // Pausar áudio da oração
+            currentState.audioPlayer.pause();
+        }
+
+        // Alternar reprodução de áudio
+        function toggleAudio() {
+            if (currentState.isPlaying) {
+                pauseAudio();
+            } else {
+                playAudio();
+            }
+        }
+
+        // Ajustar volume
+        function adjustVolume() {
+            const volume = volumeControl.value;
+            currentState.backgroundMusic.volume = volume;
+            currentState.audioPlayer.volume = volume;
+        }
+
+        // Inicializar o aplicativo quando o documento estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
